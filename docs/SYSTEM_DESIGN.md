@@ -113,50 +113,28 @@ A BaaS (Supabase/Firebase) is a viable shortcut for an MVP. PostgreSQL-based Sup
 | Signature | `signature` |
 | i18n | `flutter_localizations`, `intl` (en, bn) |
 
-### 3.2 Folder structure (feature-first)
+### 3.2 Folder structure (role-based, grow as we build)
+
+Keep it flat. Only create a folder or file when there is code to put in it.
 
 ```
 lib/
   main.dart
-  app/
-    app.dart                 # MaterialApp.router, theme, locale
-    router/                  # go_router config, role guards
-    theme/                   # tokens, blue (ops) + green (supply) palettes
-    shells/                  # one bottom-nav shell per role
-  core/
-    network/                 # dio client, interceptors, api exceptions
-    db/                      # drift database, DAOs
-    sync/                    # outbox, sync worker, conflict policy
-    auth/                    # session, token storage, rbac
-    location/                # gps, geofence checks
-    media/                   # capture, compress, upload queue
-    notifications/           # fcm, local notifications, alert model
-    widgets/                 # shared UI kit (see 3.4)
-    utils/                   # formatters (BDT, dates), validators
-  features/
-    onboarding/              # splash, role select, login, OTP, forgot password
-    dashboard/               # per-role dashboards
-    sites/                   # list, overview, health, equipment, generator, map
-    work_orders/             # list, details, create/assign, checklist, completion, report
-    checklists/              # templates, safety, inspection
-    attendance/              # check-in/out, time tracking, team attendance
-    maintenance/             # schedules (site + vehicle), service history
-    fuel/                    # site generator fuel + vehicle fuel
-    inventory/               # items, GRN, adjust, transfer, count, reorder, bins, BOM
-    procurement/             # PO, RFQ, suppliers, requisitions
-    fleet/                   # vehicles, drivers, trips, tracking, geofence, docs
-    incidents/               # incidents, alarms, escalations, roadside assistance
-    approvals/               # unified approval inbox
-    finance/                 # budget, expenses, petty cash, invoices, payments, ledger
-    vendors/                 # vendor portal + vendor management
-    documents/               # document center
-    communication/           # chat, announcements, team directory
-    analytics/               # KPI, reports, strategic, decision support
-    admin/                   # users & roles, settings, configuration
-    profile/                 # profile, certifications, settings, help
+  core/                      # app-wide: app, router, theme, roles; later api, storage, shared widgets
+  common/                    # screens every user sees: splash, role select, login
+    widgets/                 # widgets used only by common screens
+  management/                # added when we build it
+  site_manager/
+  field_force/
+  fleet/
+  inventory/
+  external/
 ```
 
-Each feature follows `data/` (DTOs, remote + local sources, repository impl) → `domain/` (entities, repository interface) → `presentation/` (screens, widgets, controllers).
+Rules:
+- Each role folder holds that role's screens directly (`fleet/trip_list_screen.dart`). Add a `widgets/` subfolder only when screens share widgets.
+- Anything used by two or more roles goes in `core/` (e.g. `core/widgets/stat_tile.dart`, `core/api_client.dart`).
+- Split a file or add a subfolder only once it gets hard to read, not in advance.
 
 ### 3.3 Navigation per role (bottom nav from the mockups)
 
